@@ -76,7 +76,7 @@ Public Class Inicio
 
     Protected Sub RadListBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles RadListBox1.SelectedIndexChanged
         Session("IDENCUESTA") = RadListBox1.SelectedValue
-        Response.Redirect("Encuesta.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&YYYY=" & CStr(Request.Params("YYYY")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
+        Response.Redirect("Encuesta.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&YYYY=" & RadListBox1.SelectedValue & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
     End Sub
 
     Sub Mensajes()

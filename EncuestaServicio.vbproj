@@ -189,8 +189,6 @@
     <Content Include="App_Data\RadCaptcha\X.wav" />
     <Content Include="App_Data\RadCaptcha\Y.wav" />
     <Content Include="App_Data\RadCaptcha\Z.wav" />
-    <Content Include="bin\Progressbar.dll" />
-    <Content Include="bin\Telerik.Web.Design.dll" />
     <Content Include="bin\Telerik.Web.Spreadsheet.dll" />
     <Content Include="bin\Telerik.Web.UI.dll" />
     <Content Include="bin\Telerik.Web.UI.Skins.dll" />
@@ -198,7 +196,6 @@
     <Content Include="bin\Telerik.Windows.Documents.Flow.dll" />
     <Content Include="bin\Telerik.Windows.Documents.Spreadsheet.dll" />
     <Content Include="bin\Telerik.Windows.Documents.Spreadsheet.FormatProviders.OpenXml.dll" />
-    <Content Include="bin\Telerik.Windows.Maths.dll" />
     <Content Include="bin\Telerik.Windows.Zip.dll" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="Encuesta.aspx" />
@@ -208,6 +205,7 @@
     <Content Include="Imagenes\Iconos\excel.png" />
     <Content Include="js\bootstrap.bundle.min.js" />
     <Content Include="Admin.aspx" />
+    <Content Include="S_EncuestaSeccion.aspx" />
     <Content Include="S_EncuestaAll.aspx" />
     <Content Include="Nom030.aspx" />
     <Content Include="Politicas.aspx" />
@@ -235,6 +233,13 @@
     </Compile>
     <Compile Include="Admin.aspx.vb">
       <DependentUpon>Admin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="S_EncuestaSeccion.aspx.designer.vb">
+      <DependentUpon>S_EncuestaSeccion.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="S_EncuestaSeccion.aspx.vb">
+      <DependentUpon>S_EncuestaSeccion.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="S_EncuestaAll.aspx.designer.vb">

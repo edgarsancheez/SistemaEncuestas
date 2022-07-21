@@ -19,7 +19,7 @@ Partial Public Class S_Encuesta
                 Session("ContTema") = 1
 
                 Try
-                    Session("IdEncuesta") = 7
+                    'Session("IdEncuesta") = 7
                     Dim Par(3) As SqlParameter
                     Par(0) = New SqlParameter("@TIPO", 11)
                     Par(1) = New SqlParameter("@IDESTUDIO", Session("IDESTUDIO"))
@@ -57,19 +57,19 @@ Partial Public Class S_Encuesta
                         Session("PregCont") = TblPReg.Rows.Count
                         TblPReg.Dispose()
 
-                        If Session("ContPreg") = 1 Then
-                            If Session("NumeroTrabajadorValido") = "" Then
+                        'If Session("ContPreg") = 1 Then
+                        '    If Session("NumeroTrabajadorValido") = "" Then
 
-                            Else
-                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"), Session("IdNivel3"), 1, 0,
-                                        Session("NumeroTrabajadorValido"), True)
-                                Session("ContPreg") = CInt(Session("ContPreg")) + 1
-                                Session("ContTema") = CInt(Session("ContTema")) + 1
-                                CargarPregunta(CInt(Session("ContPreg")))
-                                TexPreguntaAbierta.Text = ""
-                                Session("Regresar") = 0
-                            End If
-                        End If
+                        '    Else
+                        '        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"), Session("IdNivel3"), 1, 0,
+                        '                Session("NumeroTrabajadorValido"), True)
+                        '        Session("ContPreg") = CInt(Session("ContPreg")) + 1
+                        '        Session("ContTema") = CInt(Session("ContTema")) + 1
+                        '        CargarPregunta(CInt(Session("ContPreg")))
+                        '        TexPreguntaAbierta.Text = ""
+                        '        Session("Regresar") = 0
+                        '    End If
+                        'End If
 
                         BtnAnterior.Enabled = False
 
@@ -83,17 +83,15 @@ Partial Public Class S_Encuesta
                     Err.Clear()
                 End Try
             Else
-                Response.Redirect("Inicio.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
+                Response.Redirect("Inicio.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&YYYY=" & CStr(Request.Params("YYYY")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
             End If
         End If
 
     End Sub
 
     Sub CargarPregunta(ByVal IdexPreg As Integer)
-
         Try
             Dim Tabla As DataTable = CType(Session("PreguntasPorTema"), DataTable)
-
             LTema1.Text = Tabla.Rows(IdexPreg - 1).Item(2)
             LBLPREGUNTA.Text = Tabla.Rows(IdexPreg - 1).Item(3)
             LMideSatisfaccion.Text = Tabla.Rows(IdexPreg - 1).Item(5) 'MideSatisfaccion
@@ -136,7 +134,7 @@ Partial Public Class S_Encuesta
                     If Session("Jefe") = "No" Then
                         If (Session("ContPreg") = CType(Session("PreguntasPorTema"), DataTable).Rows.Count) Then
                             SaveData(Session("TblRespuestaPreguntas"), Session("IdTema"))
-                            Response.Redirect("S_EncuestaFin.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")) & "&Nivel=" & Session("IdNivel3"), False)
+                            Response.Redirect("S_EncuestaFin.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&YYYY=" & CStr(Request.Params("YYYY")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
                             Session("Abandono") = 1
                         Else
                             Session("ContPreg") = CInt(Session("ContPreg")) + 1
@@ -349,7 +347,7 @@ Partial Public Class S_Encuesta
 
             If (Session("ContPreg") = CType(Session("PreguntasPorTema"), DataTable).Rows.Count) Then
                 SaveData(Session("TblRespuestaPreguntas"), Session("IdTema"))
-                Response.Redirect("S_EncuestaFin.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")) & "&Nivel=" & Session("IdNivel3"), False)
+                Response.Redirect("S_EncuestaFin.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&YYYY=" & CStr(Request.Params("YYYY")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")), False)
                 Session("Abandono") = 1
             Else
                 Session("Anterior") = 0
@@ -456,7 +454,7 @@ Partial Public Class S_Encuesta
                     P(0) = New SqlParameter("@TIPO", 12)
                     P(1) = New SqlParameter("@IDESTUDIO", Session("IDESTUDIO"))
                     P(2) = New SqlParameter("@IDENCUESTA", Session("IDENCUESTA"))
-                    P(3) = New SqlParameter("@NUMTRABAJADOR", Session("NumeroTrabajadorValido"))
+                    P(3) = New SqlParameter("@NUMTRABAJADOR", Session("NUMEROPERSONAL"))
                     P(4) = New SqlParameter("@IDNIVEL3", Session("IDNIVEL3"))
                     P(5) = New SqlParameter("@IDPREGUNTA", .Item(4))
                     P(6) = New SqlParameter("@RESPUESTA", .Item(5))
