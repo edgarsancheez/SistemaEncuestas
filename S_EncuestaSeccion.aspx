@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-md-1"></div>
                                 <div class="col-md-4 text-center">
-                                    <asp:Label ID="LCuestionario1" runat="server" Visible="true" Font-Bold="True" Font-Size="14pt" ForeColor="Black">Pregunta : 0 de 0</asp:Label>
+                                    <asp:Label ID="LCuestionario1" runat="server" Visible="true" Font-Bold="True" Font-Size="14pt" ForeColor="Black"></asp:Label>
                                 </div>
                                 <div class="col-md-4 text-center mb-3">
                                     <asp:Label ID="LTema1" runat="server" Visible="true" Font-Bold="True" Font-Size="14pt" ForeColor="Black"></asp:Label>
@@ -86,7 +86,9 @@
                                         </asp:RadioButtonList>
                                         <asp:CheckBoxList ID="Checkbox1" runat="server" Font-Names="Arial" Font-Size="10pt" ForeColor="#333333" Visible="False" RepeatDirection="Horizontal">
                                         </asp:CheckBoxList>
+                                            
                                         <telerik:RadComboBox runat="server" ID="Combobox1" Skin="Black" Visible="false"></telerik:RadComboBox>
+                                        <telerik:RadTextBox runat="server" ID="txt1" Visible="false"  Width="80%"></telerik:RadTextBox>
                                         </div>
                                         <div class="col-md-1"></div>
                                         <div class="col-md-1"></div>
@@ -102,6 +104,7 @@
                                             <asp:CheckBoxList ID="Checkbox2" runat="server" Font-Names="Arial" Font-Size="10pt" ForeColor="#333333" Visible="False" RepeatDirection="Horizontal">
                                             </asp:CheckBoxList>
                                             <telerik:RadComboBox runat="server" ID="Combobox2" Skin="Black" Visible="false"></telerik:RadComboBox>
+                                            <telerik:RadTextBox runat="server" Visible="false"  ID="txt2" Width="80%"></telerik:RadTextBox>
                                         </div>
                                         <div class="col-md-1"></div>
                                     <div class="col-md-1"></div>
@@ -117,6 +120,7 @@
                                         <asp:CheckBoxList ID="Checkbox3" runat="server" Font-Names="Arial" Font-Size="10pt" ForeColor="#333333" Visible="False" RepeatDirection="Horizontal">
                                         </asp:CheckBoxList>
                                         <telerik:RadComboBox runat="server" ID="Combobox3" Skin="Black" Visible="false"></telerik:RadComboBox>
+                                        <telerik:RadTextBox runat="server" Visible="false"  ID="txt3" Width="80%"></telerik:RadTextBox>
                                     </div>
                                     <div class="col-md-1"></div>
                                     <div class="col-md-1"></div>
@@ -132,6 +136,7 @@
                                         <asp:CheckBoxList ID="Checkbox4" runat="server" Font-Names="Arial" Font-Size="10pt" ForeColor="#333333" Visible="False" RepeatDirection="Horizontal">
                                         </asp:CheckBoxList>
                                         <telerik:RadComboBox runat="server" ID="Combobox4" Skin="Black" Visible="false"></telerik:RadComboBox>
+                                        <telerik:RadTextBox runat="server" ID="txt4" Visible="false"  Width="80%"></telerik:RadTextBox>
                                     </div>
                                     <div class="col-md-1"></div>
                                     <div class="col-md-1"></div>
@@ -147,6 +152,7 @@
                                         <asp:CheckBoxList ID="Checkbox5" runat="server" Font-Names="Arial" Font-Size="10pt" ForeColor="#333333" Visible="False" RepeatDirection="Horizontal">
                                         </asp:CheckBoxList>
                                         <telerik:RadComboBox runat="server" ID="Combobox5" Skin="Black" Visible="false"></telerik:RadComboBox>
+                                        <telerik:RadTextBox runat="server" ID="txt5" Visible="false" Width="80%"></telerik:RadTextBox>
                                     </div>
                                     <div class="col-md-1"></div>
                                     </div>

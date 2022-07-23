@@ -176,6 +176,15 @@ Partial Public Class S_EncuestaSeccion
     Protected WithEvents Combobox1 As Global.Telerik.Web.UI.RadComboBox
 
     '''<summary>
+    '''Control txt1.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txt1 As Global.Telerik.Web.UI.RadTextBox
+
+    '''<summary>
     '''Control LblPregunta2.
     '''</summary>
     '''<remarks>
@@ -219,6 +228,15 @@ Partial Public Class S_EncuestaSeccion
     '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
     '''</remarks>
     Protected WithEvents Combobox2 As Global.Telerik.Web.UI.RadComboBox
+
+    '''<summary>
+    '''Control txt2.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txt2 As Global.Telerik.Web.UI.RadTextBox
 
     '''<summary>
     '''Control LblPregunta3.
@@ -266,6 +284,15 @@ Partial Public Class S_EncuestaSeccion
     Protected WithEvents Combobox3 As Global.Telerik.Web.UI.RadComboBox
 
     '''<summary>
+    '''Control txt3.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txt3 As Global.Telerik.Web.UI.RadTextBox
+
+    '''<summary>
     '''Control LblPregunta4.
     '''</summary>
     '''<remarks>
@@ -311,6 +338,15 @@ Partial Public Class S_EncuestaSeccion
     Protected WithEvents Combobox4 As Global.Telerik.Web.UI.RadComboBox
 
     '''<summary>
+    '''Control txt4.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txt4 As Global.Telerik.Web.UI.RadTextBox
+
+    '''<summary>
     '''Control LblPregunta5.
     '''</summary>
     '''<remarks>
@@ -354,6 +390,15 @@ Partial Public Class S_EncuestaSeccion
     '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
     '''</remarks>
     Protected WithEvents Combobox5 As Global.Telerik.Web.UI.RadComboBox
+
+    '''<summary>
+    '''Control txt5.
+    '''</summary>
+    '''<remarks>
+    '''Campo generado automáticamente.
+    '''Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+    '''</remarks>
+    Protected WithEvents txt5 As Global.Telerik.Web.UI.RadTextBox
 
     '''<summary>
     '''Control BtnAnterior.

@@ -34,7 +34,6 @@ Partial Public Class S_EncuestaSeccion
                     DS = DatosBD.FuncionConPar("SP_Encuestas", Par, Lerror.Text)
                     Session("IdNivel3") = DS.Tables(0).Rows(0).Item(0)
                     Session("NUMEROTRABAJADOR") = DateTime.Now.ToString("dMyyhms", CultureInfo.InvariantCulture)
-
                     Session("TblRespuestaPreguntas") = Nothing
 
                     Dim DsGeneral As New DataSet
@@ -52,6 +51,7 @@ Partial Public Class S_EncuestaSeccion
                         TblPReg = dv.ToTable()
                         'obtiene las  preguntas del tema actual
                         Session("PreguntasPorTema") = TblPReg
+                        Session("EncuestaTotal") = Session("PreguntasPorTema")
                         Session("ContPreg") = TblPReg.Rows(0).Item(0)
                         Session("TotalPreguntas") = DsGeneral.Tables(0).Rows.Count
                         Session("CuentaPreguntas") = TblPReg.Rows(0).Item(6) - 1
@@ -101,7 +101,7 @@ Partial Public Class S_EncuestaSeccion
 
     Sub CargarPregunta(ByVal IdexPreg As Integer, ByVal cont As Integer)
         Try
-            Dim Tabla As DataTable = CType(Session("PreguntasPorTema"), DataTable)
+            Dim Tabla As DataTable = CType(Session("EncuestaTotal"), DataTable)
             If cont = 1 Then
                 LblPregunta1.Text = Tabla.Rows(IdexPreg - 1).Item(3)
                 lblid1.Text = IdexPreg
@@ -124,11 +124,8 @@ Partial Public Class S_EncuestaSeccion
             LIndicadorRespuesta.Text = Tabla.Rows(IdexPreg - 1).Item(6) 'IndicadorRespuestaDada
             LComplemento.Text = Tabla.Rows(IdexPreg - 1).Item(9) 'Complemento
             LPilaPregunta.Text = Tabla.Rows(IdexPreg - 1).Item(10) 'PILAPREGUNTA
-
-            CargarRespuesta(Tabla.Rows(IdexPreg - 1).Item(4), LIndicadorRespuesta.Text, cont) 'TIPO DE RESPUESTA
-
             LCount.Text = Tabla.Rows.Count
-            LCuestionario1.Text = "Pregunta : " & (Session("ContTema") - 1) & " de " & (LCount.Text - 1)
+            CargarRespuesta(Tabla.Rows(IdexPreg - 1).Item(4), LIndicadorRespuesta.Text, cont) 'TIPO DE RESPUESTA
 
         Catch ex As Exception
             Lerror.Text = "Problema: " & ex.Message & "Error: " & Err.Description & "Ubicacion: " & ex.StackTrace
@@ -142,91 +139,114 @@ Partial Public Class S_EncuestaSeccion
             Dim combo As New RadComboBox
             Dim radio As New RadioButtonList
             Dim check As New CheckBoxList
-
             Dim DSRespuestas As DataSet
-            Dim PLoad(1) As SqlParameter
-            PLoad(0) = New SqlParameter("@TIPO", 6)
-            PLoad(1) = New SqlParameter("@IDRESPUESTA", CveRespuesta)
-            DSRespuestas = DatosBD.FuncionConPar("SP_Encuestas", PLoad, Lerror.Text)
 
-            If Lerror.Text.Length = 0 Then
-                If Not DSRespuestas Is Nothing Then
-
-                    If IndicadorRespuesta = 1 Then 'radiobutton
-                        If Cont = 1 Then
-                            Radio1.DataSource = DSRespuestas.Tables(0)
-                            Radio1.DataTextField = "DescRespuesta"
-                            Radio1.DataValueField = "OrdenRespuesta"
-                            Radio1.DataBind()
-                            Radio1.Visible = True
-                        ElseIf Cont = 2 Then
-                            Radio2.DataSource = DSRespuestas.Tables(0)
-                            Radio2.DataTextField = "DescRespuesta"
-                            Radio2.DataValueField = "OrdenRespuesta"
-                            Radio2.DataBind()
-                            Radio2.Visible = True
-                        ElseIf Cont = 3 Then
-                            Radio3.DataSource = DSRespuestas.Tables(0)
-                            Radio3.DataTextField = "DescRespuesta"
-                            Radio3.DataValueField = "OrdenRespuesta"
-                            Radio3.DataBind()
-                            Radio3.Visible = True
-                        ElseIf Cont = 4 Then
-                            Radio4.DataSource = DSRespuestas.Tables(0)
-                            Radio4.DataTextField = "DescRespuesta"
-                            Radio4.DataValueField = "OrdenRespuesta"
-                            Radio4.DataBind()
-                            Radio4.Visible = True
-                        ElseIf Cont = 5 Then
-                            Radio5.DataSource = DSRespuestas.Tables(0)
-                            Radio5.DataTextField = "DescRespuesta"
-                            Radio5.DataValueField = "OrdenRespuesta"
-                            Radio5.DataBind()
-                            Radio5.Visible = True
-                        End If
-
-                        'IndicadorRespuesta = 2 Then 'combobox
-                        'combo.DataSource = DSRespuestas.Tables(0)
-                        'combo.DataTextField = "DescRespuesta"
-                        'combo.DataValueField = "OrdenRespuesta"
-                        'combo.DataBind()
-                        'combo.Visible = True
-
-                        'If Cont = 1 Then
-                        '    Combobox1 = combo
-                        'ElseIf Cont = 2 Then
-                        '    Combobox2 = combo
-                        'ElseIf Cont = 3 Then
-                        '    Combobox3 = combo
-                        'ElseIf Cont = 4 Then
-                        '    Combobox4 = combo
-                        'ElseIf Cont = 5 Then
-                        '    Combobox5 = combo
-                        'End If
-                        'ElseIf IndicadorRespuesta = 0 Then 'checkbox
-                        '    check.DataSource = DSRespuestas.Tables(0)
-                        '    check.DataTextField = "DescRespuesta"
-                        '    check.DataValueField = "OrdenRespuesta"
-                        '    check.DataBind()
-                        '    check.Visible = True
-
-                        '    If Cont = 1 Then
-                        '        Checkbox1 = check
-                        '    ElseIf Cont = 2 Then
-                        '        Checkbox2 = check
-                        '    ElseIf Cont = 3 Then
-                        '        Checkbox3 = check
-                        '    ElseIf Cont = 4 Then
-                        '        Checkbox4 = check
-                        '    ElseIf Cont = 5 Then
-                        '        Checkbox5 = check
-                        '    End If
-                    End If
+            If CveRespuesta = 999 Then
+                If Cont = 1 Then
+                    txt1.Visible = True
+                    Radio1.Visible = False
+                    Checkbox1.Visible = False
+                    Combobox1.Visible = False
+                ElseIf Cont = 2 Then
+                    txt2.Visible = True
+                    Radio2.Visible = False
+                    Checkbox2.Visible = False
+                    Combobox2.Visible = False
+                ElseIf Cont = 3 Then
+                    txt3.Visible = True
+                    Radio3.Visible = False
+                    Checkbox3.Visible = False
+                    Combobox3.Visible = False
+                ElseIf Cont = 4 Then
+                    txt4.Visible = True
+                    Radio4.Visible = False
+                    Checkbox4.Visible = False
+                    Combobox4.Visible = False
+                ElseIf Cont = 5 Then
+                    txt5.Visible = True
+                    Radio5.Visible = False
+                    Checkbox5.Visible = False
+                    Combobox5.Visible = False
                 End If
             Else
-                Cargar.UserMsgBox(Lerror.Text, Me)
-            End If
+                Dim PLoad(1) As SqlParameter
+                PLoad(0) = New SqlParameter("@TIPO", 6)
+                PLoad(1) = New SqlParameter("@IDRESPUESTA", CveRespuesta)
+                DSRespuestas = DatosBD.FuncionConPar("SP_Encuestas", PLoad, Lerror.Text)
 
+                If Lerror.Text.Length = 0 Then
+                    If Not DSRespuestas Is Nothing Then
+                        If IndicadorRespuesta = 1 Then 'radiobutton
+                            If Cont = 1 Then
+                                Radio1.DataSource = DSRespuestas.Tables(0)
+                                Radio1.DataTextField = "DescRespuesta"
+                                Radio1.DataValueField = "OrdenRespuesta"
+                                Radio1.DataBind()
+                                Radio1.Visible = True
+                            ElseIf Cont = 2 Then
+                                Radio2.DataSource = DSRespuestas.Tables(0)
+                                Radio2.DataTextField = "DescRespuesta"
+                                Radio2.DataValueField = "OrdenRespuesta"
+                                Radio2.DataBind()
+                                Radio2.Visible = True
+                            ElseIf Cont = 3 Then
+                                Radio3.DataSource = DSRespuestas.Tables(0)
+                                Radio3.DataTextField = "DescRespuesta"
+                                Radio3.DataValueField = "OrdenRespuesta"
+                                Radio3.DataBind()
+                                Radio3.Visible = True
+                            ElseIf Cont = 4 Then
+                                Radio4.DataSource = DSRespuestas.Tables(0)
+                                Radio4.DataTextField = "DescRespuesta"
+                                Radio4.DataValueField = "OrdenRespuesta"
+                                Radio4.DataBind()
+                                Radio4.Visible = True
+                            ElseIf Cont = 5 Then
+                                Radio5.DataSource = DSRespuestas.Tables(0)
+                                Radio5.DataTextField = "DescRespuesta"
+                                Radio5.DataValueField = "OrdenRespuesta"
+                                Radio5.DataBind()
+                                Radio5.Visible = True
+                            End If
+                        ElseIf IndicadorRespuesta = 0 Then
+                            If Cont = 1 Then
+                                Checkbox1.DataSource = DSRespuestas.Tables(0)
+                                Checkbox1.DataTextField = "DescRespuesta"
+                                Checkbox1.DataValueField = "OrdenRespuesta"
+                                Checkbox1.DataBind()
+                                Checkbox1.Visible = True
+                            ElseIf Cont = 2 Then
+                                Checkbox2.DataSource = DSRespuestas.Tables(0)
+                                Checkbox2.DataTextField = "DescRespuesta"
+                                Checkbox2.DataValueField = "OrdenRespuesta"
+                                Checkbox2.DataBind()
+                                Checkbox2.Visible = True
+                            ElseIf Cont = 3 Then
+                                Checkbox3.DataSource = DSRespuestas.Tables(0)
+                                Checkbox3.DataTextField = "DescRespuesta"
+                                Checkbox3.DataValueField = "OrdenRespuesta"
+                                Checkbox3.DataBind()
+                                Checkbox3.Visible = True
+                            ElseIf Cont = 4 Then
+                                Checkbox4.DataSource = DSRespuestas.Tables(0)
+                                Checkbox4.DataTextField = "DescRespuesta"
+                                Checkbox4.DataValueField = "OrdenRespuesta"
+                                Checkbox4.DataBind()
+                                Checkbox4.Visible = True
+                            ElseIf Cont = 5 Then
+                                Checkbox5.DataSource = DSRespuestas.Tables(0)
+                                Checkbox5.DataTextField = "DescRespuesta"
+                                Checkbox5.DataValueField = "OrdenRespuesta"
+                                Checkbox5.DataBind()
+                                Checkbox5.Visible = True
+                            End If
+
+                        End If
+                    End If
+                Else
+                    Cargar.UserMsgBox(Lerror.Text, Me)
+                End If
+            End If
         Catch ex As Exception
             Lerror.Text = "Problema: " & ex.Message & "Error: " & Err.Description & "Ubicacion: " & ex.StackTrace
         End Try
@@ -237,171 +257,200 @@ Partial Public Class S_EncuestaSeccion
             Dim RowId = Session("ContPreg")
             Dim DsGeneral As DataSet = Session("DsGeneral")
             Dim Tabla As DataTable = CType(Session("PreguntasPorTema"), DataTable)
-            Dim NumPreg As Integer = Tabla.Rows(RowId - 1).Item(0)
+            Dim TablaTotal As DataTable = CType(Session("EncuestaTotal"), DataTable)
 
             If LblPregunta1.Visible = True Then
-                If LIndicadorRespuesta.Text = 1 Then
+                If Radio1.Visible = True Then
                     If Radio1.SelectedValue = "" Then
                         Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
                         Exit Sub
                     Else
                         CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                                    Session("IdNivel3"), lblid1.Text, Radio1.SelectedValue, "NA", True)
+                            Session("IdNivel3"), lblid1.Text, Radio1.SelectedValue, "NA", True)
                     End If
-                    'ElseIf LIndicadorRespuesta.Text = 2 Then
-                    '    If Radio1.SelectedValue = "" Then
-                    '            Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '            Exit Sub
-                    '        Else
-                    '            CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                    '            Session("IdNivel3"), NumPreg, Radio1.SelectedValue, "NA", True)
-                    '        End If
-                    'ElseIf LIndicadorRespuesta.Text = 0 Then
-                    '    Dim CheckedItems As Integer = 0
-                    '    For Each li As ListItem In Checkbox1.Items
-                    '        If li.Selected Then
-                    '            CheckedItems = CheckedItems + 1
-                    '        End If
-                    '    Next
-                    '    If CheckedItems = 0 Then
-                    '        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '        Exit Sub
-                    '    End If
+                ElseIf txt1.Visible = True Then
+                    If txt1.Text = "" Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                            Session("IdNivel3"), lblid1.Text, 0, txt1.Text, True)
+                    End If
+                ElseIf Checkbox1.Visible = True Then
+                    Dim CheckedItems As Integer = 0
+                    For Each li As ListItem In Checkbox1.Items
+                        If li.Selected Then
+                            CheckedItems = CheckedItems + 1
+                        End If
+                    Next
+                    If CheckedItems = 0 Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        For Each li As ListItem In Checkbox1.Items
+                            If li.Selected Then
+                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                                        Session("IdNivel3"), lblid1.Text, li.Value, "NA", True)
+                            End If
+                        Next
+                    End If
                 End If
             End If
             If LblPregunta2.Visible = True Then
-                If LIndicadorRespuesta.Text = 1 Then
+                If Radio2.Visible = True Then
                     If Radio2.SelectedValue = "" Then
                         Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
                         Exit Sub
                     Else
                         CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                                    Session("IdNivel3"), lblid2.Text, Radio2.SelectedValue, "NA", True)
+                            Session("IdNivel3"), lblid2.Text, Radio2.SelectedValue, "NA", True)
                     End If
-                    'ElseIf LIndicadorRespuesta.Text = 2 Then
-                    '    If Radio2.SelectedValue = "" Then
-                    '            Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '            Exit Sub
-                    '        Else
-                    '            CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                    '            Session("IdNivel3"), NumPreg, Radio2.SelectedValue, "NA", True)
-                    '        End If
+                ElseIf txt2.Visible = True Then
+                    If txt2.Text = "" Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                            Session("IdNivel3"), lblid2.Text, 0, txt2.Text, True)
+                    End If
+                ElseIf Checkbox2.Visible = True Then
+                    Dim CheckedItems As Integer = 0
+                    For Each li As ListItem In Checkbox2.Items
+                        If li.Selected Then
+                            CheckedItems = CheckedItems + 1
+                        End If
+                    Next
+                    If CheckedItems = 0 Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        For Each li As ListItem In Checkbox2.Items
+                            If li.Selected Then
+                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                                        Session("IdNivel3"), lblid2.Text, li.Value, "NA", True)
+                            End If
+                        Next
+                    End If
                 End If
-                'ElseIf LIndicadorRespuesta.Text = 0 Then
-                '    Dim CheckedItems As Integer = 0
-                '    For Each li As ListItem In Checkbox1.Items
-                '        If li.Selected Then
-                '            CheckedItems = CheckedItems + 1
-                '        End If
-                '    Next
-                '    If CheckedItems = 0 Then
-                '        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                '        Exit Sub
-                '    End If
             End If
             If LblPregunta3.Visible = True Then
-                If LIndicadorRespuesta.Text = 1 Then
+                If Radio3.Visible = True Then
                     If Radio3.SelectedValue = "" Then
                         Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
                         Exit Sub
                     Else
                         CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                                    Session("IdNivel3"), lblid3.Text, Radio3.SelectedValue, "NA", True)
+                            Session("IdNivel3"), lblid3.Text, Radio3.SelectedValue, "NA", True)
                     End If
-                    'ElseIf LIndicadorRespuesta.Text = 2 Then
-                    '    If Radio3.SelectedValue = "" Then
-                    '            Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '            Exit Sub
-                    '        Else
-                    '            CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                    '                    Session("IdNivel3"), NumPreg, Radio3.SelectedValue, "NA", True)
-                    '        End If
-                    'ElseIf LIndicadorRespuesta.Text = 0 Then
-                    '    Dim CheckedItems As Integer = 0
-                    '    For Each li As ListItem In Checkbox1.Items
-                    '        If li.Selected Then
-                    '            CheckedItems = CheckedItems + 1
-                    '        End If
-                    '    Next
-                    '    If CheckedItems = 0 Then
-                    '        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '        Exit Sub
-                    '    End If
-                    'End If
+                ElseIf txt3.Visible = True Then
+                    If txt3.Text = "" Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                            Session("IdNivel3"), lblid3.Text, 0, txt3.Text, True)
+                    End If
+                ElseIf Checkbox3.Visible = True Then
+                    Dim CheckedItems As Integer = 0
+                    For Each li As ListItem In Checkbox3.Items
+                        If li.Selected Then
+                            CheckedItems = CheckedItems + 1
+                        End If
+                    Next
+                    If CheckedItems = 0 Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        For Each li As ListItem In Checkbox3.Items
+                            If li.Selected Then
+                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                                        Session("IdNivel3"), lblid3.Text, li.Value, "NA", True)
+                            End If
+                        Next
+                    End If
                 End If
-
             End If
             If LblPregunta4.Visible = True Then
-                If LIndicadorRespuesta.Text = 1 Then
+                If Radio4.Visible = True Then
                     If Radio4.SelectedValue = "" Then
                         Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
                         Exit Sub
                     Else
                         CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                                Session("IdNivel3"), lblid4.Text, Radio4.SelectedValue, "NA", True)
+                            Session("IdNivel3"), lblid4.Text, Radio4.SelectedValue, "NA", True)
                     End If
-                    'ElseIf LIndicadorRespuesta.Text = 2 Then
-                    '    If Radio4.SelectedValue = "" Then
-                    '            Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '            Exit Sub
-                    '        Else
-                    '            CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                    '                    Session("IdNivel3"), NumPreg, Radio4.SelectedValue, "NA", True)
-                    '        End If
-                    'ElseIf LIndicadorRespuesta.Text = 0 Then
-                    '    Dim CheckedItems As Integer = 0
-                    '    For Each li As ListItem In Checkbox1.Items
-                    '        If li.Selected Then
-                    '            CheckedItems = CheckedItems + 1
-                    '        End If
-                    '    Next
-                    '    If CheckedItems = 0 Then
-                    '        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '        Exit Sub
-                    '    End If
+                ElseIf txt4.Visible = True Then
+                    If txt4.Text = "" Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                            Session("IdNivel3"), lblid4.Text, 0, txt4.Text, True)
+                    End If
+                ElseIf Checkbox4.Visible = True Then
+                    Dim CheckedItems As Integer = 0
+                    For Each li As ListItem In Checkbox4.Items
+                        If li.Selected Then
+                            CheckedItems = CheckedItems + 1
+                        End If
+                    Next
+                    If CheckedItems = 0 Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        For Each li As ListItem In Checkbox4.Items
+                            If li.Selected Then
+                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                                        Session("IdNivel3"), lblid4.Text, li.Value, "NA", True)
+                            End If
+                        Next
+                    End If
                 End If
             End If
             If LblPregunta5.Visible = True Then
-                If LIndicadorRespuesta.Text = 1 Then
+                If Radio5.Visible = True Then
                     If Radio5.SelectedValue = "" Then
                         Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
                         Exit Sub
                     Else
                         CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                                Session("IdNivel3"), lblid5.Text, Radio5.SelectedValue, "NA", True)
+                            Session("IdNivel3"), lblid5.Text, Radio5.SelectedValue, "NA", True)
                     End If
-                    'ElseIf LIndicadorRespuesta.Text = 2 Then
-                    '    If Radio5.SelectedValue = "" Then
-                    '            Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '            Exit Sub
-                    '        Else
-                    '            CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
-                    '                    Session("IdNivel3"), NumPreg, Radio5.SelectedValue, "NA", True)
-                    '        End If
-                    'ElseIf LIndicadorRespuesta.Text = 0 Then
-                    '    Dim CheckedItems As Integer = 0
-                    '    For Each li As ListItem In Checkbox1.Items
-                    '        If li.Selected Then
-                    '            CheckedItems = CheckedItems + 1
-                    '        End If
-                    '    Next
-                    '    If CheckedItems = 0 Then
-                    '        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
-                    '        Exit Sub
-                    '    End If
+                ElseIf txt5.Visible = True Then
+                    If txt5.Text = "" Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                            Session("IdNivel3"), lblid5.Text, 0, txt5.Text, True)
+                    End If
+                ElseIf Checkbox5.Visible = True Then
+                    Dim CheckedItems As Integer = 0
+                    For Each li As ListItem In Checkbox5.Items
+                        If li.Selected Then
+                            CheckedItems = CheckedItems + 1
+                        End If
+                    Next
+                    If CheckedItems = 0 Then
+                        Lerror.Text = "Es necesario responder las preguntas para continuar el cuestionario."
+                        Exit Sub
+                    Else
+                        For Each li As ListItem In Checkbox5.Items
+                            If li.Selected Then
+                                CrearDS(Session("IDESTUDIO"), Session("IDENCUESTA"), Session("NUMEROTRABAJADOR"),
+                                        Session("IdNivel3"), lblid5.Text, li.Value, "NA", True)
+                            End If
+                        Next
+                    End If
                 End If
             End If
 
-            If (Session("ContPreg") = CType(Session("PreguntasPorTema"), DataTable).Rows.Count) Then
+            If lblid5.Text = CType(Session("EncuestaTotal"), DataTable).Rows.Count Then
                 SaveData(Session("TblRespuestaPreguntas"), Session("IdTema"))
                 Response.Redirect("S_EncuestaFin.aspx?XXXX=" & CStr(Request.Params("XXXX")) & "&ZZZZ=" & CStr(Request.Params("ZZZZ")) & "&Nivel=" & Session("IdNivel3"), False)
                 Session("Abandono") = 1
-            Else
-                Session("Anterior") = 0
-                Session("ContPreg") = CInt(Session("ContPreg")) + 1
-                Session("ContTema") = CInt(Session("ContTema")) + 1
-                BtnAnterior.Enabled = True
             End If
+            BtnAnterior.Enabled = True
 
             Dim dv As DataView = DsGeneral.Tables(0).DefaultView
             Dim tblpreguntas As DataTable
@@ -411,30 +460,33 @@ Partial Public Class S_EncuestaSeccion
             tblpreguntas = dv.ToTable()
             Session("PreguntasPorTema") = tblpreguntas
             Session("ContPreg") = tblpreguntas.Rows(0).Item(0)
-            Session("CuentaPreguntas") = tblpreguntas.Rows(0).Item(6) - 1
+            Session("TotalPreguntas") = DsGeneral.Tables(0).Rows.Count
+            'ession("CuentaPreguntas") = tblpreguntas.Rows(0).Item(6) - 1
+            LCuestionario1.Text = "Pregunta " & Session("ContPreg") & " de " & Session("TotalPreguntas")
+
             Dim TblPreg As DataTable = CType(Session("PreguntasPorTema"), DataTable)
             Dim cont As Integer = 0
 
-            LimpiarPreguntas()
-
+            'CargarPregunta(Session("ContPreg"), 1)
+            'LimpiarPreguntas()
             For n As Integer = 0 To 4
                 cont = cont + 1
-                If cont <= TblPReg.Rows.Count Then
-                    Session("ContPreg") = TblPReg.Rows(n).Item(0)
+                If cont <= TblPreg.Rows.Count Then
+                    Session("ContPreg") = TblPreg.Rows(n).Item(0)
                     If cont = 1 Then
-                        CargarPregunta(TblPReg.Rows(n).Item(0), cont)
+                        CargarPregunta(TblPreg.Rows(n).Item(0), cont)
                         LCount.Text = Session("ContPreg")
                     ElseIf cont = 2 Then
-                        CargarPregunta(TblPReg.Rows(n).Item(0), cont)
+                        CargarPregunta(TblPreg.Rows(n).Item(0), cont)
                         LCount.Text = Session("ContPreg")
                     ElseIf cont = 3 Then
-                        CargarPregunta(TblPReg.Rows(n).Item(0), cont)
+                        CargarPregunta(TblPreg.Rows(n).Item(0), cont)
                         LCount.Text = Session("ContPreg")
                     ElseIf cont = 4 Then
-                        CargarPregunta(TblPReg.Rows(n).Item(0), cont)
+                        CargarPregunta(TblPreg.Rows(n).Item(0), cont)
                         LCount.Text = Session("ContPreg")
                     ElseIf cont = 5 Then
-                        CargarPregunta(TblPReg.Rows(n).Item(0), cont)
+                        CargarPregunta(TblPreg.Rows(n).Item(0), cont)
                         LCount.Text = Session("ContPreg")
                     End If
                 End If
@@ -451,12 +503,21 @@ Partial Public Class S_EncuestaSeccion
         LblPregunta3.Visible = False
         LblPregunta4.Visible = False
         LblPregunta5.Visible = False
+        Checkbox1.Visible = False
+        Checkbox2.Visible = False
+        Checkbox3.Visible = False
+        Checkbox4.Visible = False
+        Checkbox5.Visible = False
         Radio1.Visible = False
         Radio2.Visible = False
         Radio3.Visible = False
         Radio4.Visible = False
         Radio5.Visible = False
-
+        txt1.Visible = False
+        txt2.Visible = False
+        txt3.Visible = False
+        txt4.Visible = False
+        txt5.Visible = False
     End Sub
 
     Protected Sub BTNANTERIOR_Click(ByVal sender As Object, ByVal e As EventArgs) Handles BtnAnterior.Click
